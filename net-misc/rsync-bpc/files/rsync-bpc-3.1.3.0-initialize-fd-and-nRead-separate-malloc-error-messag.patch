@@ -1,0 +1,47 @@
+From da7bd1180fd6250f3157466416f326bcaf4610eb Mon Sep 17 00:00:00 2001
+From: Craig Barratt <19445341+craigbarratt@users.noreply.github.com>
+Date: Thu, 15 Jul 2021 21:43:58 -0700
+Subject: [PATCH 07/20] initialize fd and nRead; separate malloc error
+ messages; coverity #23
+
+---
+ backuppc/bpc_attrib.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
+
+diff --git a/backuppc/bpc_attrib.c b/backuppc/bpc_attrib.c
+index b0b2896..51ad469 100644
+--- a/backuppc/bpc_attrib.c
++++ b/backuppc/bpc_attrib.c
+@@ -175,10 +175,15 @@ void bpc_attrib_xattrCopy(bpc_attrib_xattr *xattrSrc, bpc_attrib_file *fileDest)
+ {
+     bpc_attrib_xattr *xattr;
+     uchar *key   = (uchar*)malloc(xattrSrc->key.keyLen > 0 ? xattrSrc->key.keyLen : 1);
+-    uchar *value = (uchar*)malloc(xattrSrc->valueLen > 0 ? xattrSrc->valueLen : 1);
++    uchar *value;
+ 
+-    if ( !key || !value ) {
+-        bpc_logErrf("bpc_attrib_xattrCopy: can't allocate %d,%d bytes\n", xattrSrc->key.keyLen + 1, xattrSrc->valueLen + 1);
++    if ( !key ) {
++        bpc_logErrf("bpc_attrib_xattrCopy: can't allocate %d bytes for key\n", xattrSrc->key.keyLen + 1);
++        return;
++    }
++    value = (uchar*)malloc(xattrSrc->valueLen > 0 ? xattrSrc->valueLen : 1);
++    if ( !value ) {
++        bpc_logErrf("bpc_attrib_xattrCopy: can't allocate %d bytes for value\n", xattrSrc->valueLen + 1);
+         return;
+     }
+ 
+@@ -691,8 +696,8 @@ uchar *bpc_attrib_buf2fileFull(bpc_attrib_file *file, uchar *bufP, uchar *bufEnd
+ int bpc_attrib_dirRead(bpc_attrib_dir *dir, char *dirPath, char *attribFilePath, int backupNum)
+ {
+     bpc_strBuf *attribPath = bpc_strBuf_new();
+-    bpc_fileZIO_fd fd;
+-    size_t nRead;
++    bpc_fileZIO_fd fd = { .fd = -1 };
++    size_t nRead = 0;
+     uint32 magic = 0;
+     uchar buf[8 * 65536], *bufP;
+     STRUCT_STAT st;
+-- 
+2.49.0
+

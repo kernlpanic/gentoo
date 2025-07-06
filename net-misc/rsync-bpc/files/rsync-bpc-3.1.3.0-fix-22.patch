@@ -1,0 +1,25 @@
+From 33865156ff930d234247c94ee1154fe9bcba68f4 Mon Sep 17 00:00:00 2001
+From: Craig Barratt <19445341+craigbarratt@users.noreply.github.com>
+Date: Mon, 12 Jul 2021 10:44:32 -0700
+Subject: [PATCH 03/20] fix #22
+
+---
+ options.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/options.c b/options.c
+index bef3081..ad296ac 100644
+--- a/options.c
++++ b/options.c
+@@ -1879,7 +1879,7 @@ int parse_arguments(int *argc_p, const char ***argv_p)
+ 	}
+         if ( !bpc_top_dir || !bpc_host_name || !bpc_share_name || bpc_backup_num < 0 ) {
+             snprintf(err_buf, sizeof(err_buf), "BackupPC options are compulsory for running rsync_bpc\n");
+-            exit_cleanup(RERR_SYNTAX);
++            return 0;
+         }
+ 
+ 	if (checksum_choice && strcmp(checksum_choice, "auto") != 0 && strcmp(checksum_choice, "auto,auto") != 0) {
+-- 
+2.49.0
+

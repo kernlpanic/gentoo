@@ -1,0 +1,26 @@
+From 2f60014cf0107f744c0fa8964fdc77bc615fbea1 Mon Sep 17 00:00:00 2001
+From: Craig Barratt <19445341+craigbarratt@users.noreply.github.com>
+Date: Thu, 15 Jul 2021 21:42:13 -0700
+Subject: [PATCH 05/20] free(d->entries) before free(d); coverity #23
+
+---
+ bpc_sysCalls.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/bpc_sysCalls.c b/bpc_sysCalls.c
+index 8a20a97..cd799c7 100644
+--- a/bpc_sysCalls.c
++++ b/bpc_sysCalls.c
+@@ -1974,8 +1974,8 @@ DIR *bpc_opendir(const char *path)
+      */
+     d->entrySize = entrySize;
+     if ( bpc_attribCache_getDirEntries(&acNew, (char*)path, d->entries, d->entrySize) != d->entrySize ) {
+-        free(d);
+         free(d->entries);
++        free(d);
+         return NULL;
+     }
+     d->entryIdx = 0;
+-- 
+2.49.0
+

@@ -1,0 +1,34 @@
+From dcb672942e4094849ff035506729a998b340e7e3 Mon Sep 17 00:00:00 2001
+From: Craig Barratt <19445341+craigbarratt@users.noreply.github.com>
+Date: Thu, 8 Oct 2020 13:18:07 -0700
+Subject: [PATCH 01/20] fixed chmod of poolPath
+
+---
+ backuppc/bpc_poolWrite.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/backuppc/bpc_poolWrite.c b/backuppc/bpc_poolWrite.c
+index 003ba35..d30aa45 100644
+--- a/backuppc/bpc_poolWrite.c
++++ b/backuppc/bpc_poolWrite.c
+@@ -788,7 +788,7 @@ void bpc_poolWrite_addToPool(bpc_poolWrite_info *info, char *fileName, int v3Poo
+             unlink(lockFile->s);
+             redo = 1;
+         } else {
+-            chmod(poolPath, 0444);
++            chmod(poolPath->s, 0444);
+             stat(poolPath->s, &st);
+             info->retValue     = v3PoolFile ? 2 : 0;
+             info->poolFileSize = st.st_size;
+@@ -837,7 +837,7 @@ void bpc_poolWrite_addToPool(bpc_poolWrite_info *info, char *fileName, int v3Poo
+              * remove the original file and return
+              */
+             unlink(fileName);
+-            chmod(poolPath, 0444);
++            chmod(poolPath->s, 0444);
+             info->retValue     = v3PoolFile ? 2 : 0;
+             info->poolFileSize = st.st_size;
+             bpc_strBuf_free(poolPath);
+-- 
+2.49.0
+

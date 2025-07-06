@@ -1,0 +1,42 @@
+From 12b6ad3b8d2baafb27040fc59cbf71b2703c2e4e Mon Sep 17 00:00:00 2001
+From: Machiry Aravind Kumar <makrvcs@gmail.com>
+Date: Sat, 4 Nov 2023 00:29:23 -0400
+Subject: [PATCH 12/20] Update main.c
+
+The size argument of this snprintf call is derived from its return value, which may exceed the size of the buffer and overflow.
+
+Check the return value of snprintf to be less than the size of the buffer.
+---
+ main.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/main.c b/main.c
+index 1aff41c..d3add21 100644
+--- a/main.c
++++ b/main.c
+@@ -284,15 +284,20 @@ static void output_itemized_counts(const char *prefix, int *counts)
+ {
+ 	static char *labels[] = { "reg", "dir", "link", "dev", "special" };
+ 	char buf[1024], *pre = " (";
+-	int j, len = 0;
++	int j, len = 0, tmplen = 0;
+ 	int total = counts[0];
+ 	if (total) {
+ 		counts[0] -= counts[1] + counts[2] + counts[3] + counts[4];
+ 		for (j = 0; j < 5; j++) {
+ 			if (counts[j]) {
+-				len += snprintf(buf+len, sizeof buf - len - 2,
++				tmplen = snprintf(buf+len, sizeof buf - len - 2,
+ 					"%s%s: %s",
+ 					pre, labels[j], comma_num(counts[j]));
++				// did snprintf overflow?
++				if (tmplen >= (sizeof buf - len - 2)) {
++					break;
++				}
++				len += tmplen;
+ 				pre = ", ";
+ 			}
+ 		}
+-- 
+2.49.0
+
