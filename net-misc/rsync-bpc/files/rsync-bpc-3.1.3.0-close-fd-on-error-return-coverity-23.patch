@@ -1,0 +1,32 @@
+From 52409b4a958835fcdac3133b76540bbfd5f8a335 Mon Sep 17 00:00:00 2001
+From: Craig Barratt <19445341+craigbarratt@users.noreply.github.com>
+Date: Thu, 15 Jul 2021 21:43:08 -0700
+Subject: [PATCH 06/20] close(fd) on error return; coverity #23
+
+---
+ backuppc/bpc_refCount.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/backuppc/bpc_refCount.c b/backuppc/bpc_refCount.c
+index 11c5795..163ff76 100644
+--- a/backuppc/bpc_refCount.c
++++ b/backuppc/bpc_refCount.c
+@@ -302,6 +302,7 @@ int bpc_poolRefFileRead(bpc_refCount_info *info, char *fileName)
+     }
+     if ( bpc_poolRef_read_more_data(fd, buf, sizeof(buf), &nRead, &bufP, fileName) < 0 ) {
+         bpc_logErrf("bpc_poolRefFileRead: can't read data from %s (errno %d)\n", fileName, errno);
++        close(fd);
+         return -1;
+     }
+     magic = CONV_BUF_TO_UINT32(bufP);
+@@ -309,6 +310,7 @@ int bpc_poolRefFileRead(bpc_refCount_info *info, char *fileName)
+ 
+     if ( magic != BPC_POOL_REF_MAGIC ) {
+         bpc_logErrf("bpc_poolRefFileRead: bad magic number 0x%x (expected 0x%x)\n", magic, BPC_POOL_REF_MAGIC);
++        close(fd);
+         return -1;
+     }
+ 
+-- 
+2.49.0
+

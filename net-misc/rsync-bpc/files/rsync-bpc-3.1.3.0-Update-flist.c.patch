@@ -1,0 +1,26 @@
+From 54ea2c4fea438d0991232d979e2ca6106ca9f826 Mon Sep 17 00:00:00 2001
+From: Machiry Aravind Kumar <makrvcs@gmail.com>
+Date: Fri, 3 Nov 2023 23:54:13 -0400
+Subject: [PATCH 11/20] Update flist.c
+
+Place the offset check before use.
+---
+ flist.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/flist.c b/flist.c
+index 5288867..87de96d 100644
+--- a/flist.c
++++ b/flist.c
+@@ -512,7 +512,7 @@ static void send_file_entry(int f, const char *fname, struct file_struct *file,
+ #endif
+ 
+ 	for (l1 = 0;
+-	    lastname[l1] && (fname[l1] == lastname[l1]) && (l1 < 255);
++	    (l1 < 255) && lastname[l1] && (fname[l1] == lastname[l1]);
+ 	    l1++) {}
+ 	l2 = strlen(fname+l1);
+ 
+-- 
+2.49.0
+

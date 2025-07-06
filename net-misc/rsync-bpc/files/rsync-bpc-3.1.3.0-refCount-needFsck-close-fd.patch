@@ -1,0 +1,24 @@
+From 66ece954afa31b5aa484369f0beba9297d2d5b86 Mon Sep 17 00:00:00 2001
+From: Ovidiu Stanila <ovidiu.stanila@jentla.com>
+Date: Thu, 29 Sep 2022 11:11:28 +0300
+Subject: [PATCH 09/20] refCount needFsck close(fd)
+
+---
+ backuppc/bpc_refCount.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/backuppc/bpc_refCount.c b/backuppc/bpc_refCount.c
+index 163ff76..bad60ec 100644
+--- a/backuppc/bpc_refCount.c
++++ b/backuppc/bpc_refCount.c
+@@ -372,6 +372,7 @@ void bpc_poolRefRequestFsck(char *backupDir, int ext)
+         bpc_logErrf("bpc_poolRefRequestFsck: can't open/create fsck request file %s (errno %d)\n", fileName->s, errno);
+     }
+     bpc_strBuf_free(fileName);
++    close(fd);
+ }
+ 
+ /***********************************************************************
+-- 
+2.49.0
+

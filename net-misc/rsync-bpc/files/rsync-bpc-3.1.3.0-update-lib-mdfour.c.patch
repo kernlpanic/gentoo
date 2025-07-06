@@ -1,0 +1,42 @@
+From cb755511d9d20f87af6980c4fcc2703925da70b2 Mon Sep 17 00:00:00 2001
+From: Craig Barratt <19445341+craigbarratt@users.noreply.github.com>
+Date: Sun, 26 Nov 2023 10:24:14 -0800
+Subject: [PATCH 17/20] update lib/mdfour.c
+
+---
+ lib/mdfour.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/lib/mdfour.c b/lib/mdfour.c
+index 7254686..6203658 100644
+--- a/lib/mdfour.c
++++ b/lib/mdfour.c
+@@ -4,7 +4,7 @@
+  * An implementation of MD4 designed for use in the SMB authentication protocol.
+  *
+  * Copyright (C) 1997-1998 Andrew Tridgell
+- * Copyright (C) 2005-2018 Wayne Davison
++ * Copyright (C) 2005-2020 Wayne Davison
+  * 
+  * This program is free software; you can redistribute it and/or modify
+  * it under the terms of the GNU General Public License as published by
+@@ -193,6 +193,8 @@ void mdfour_result(md_context *md, uchar digest[MD4_DIGEST_LEN])
+ 	copy4(digest+12, m->D);
+ }
+ 
++#ifdef TEST_MDFOUR
++
+ void mdfour(uchar digest[MD4_DIGEST_LEN], uchar *in, int length)
+ {
+ 	md_context md;
+@@ -201,7 +203,6 @@ void mdfour(uchar digest[MD4_DIGEST_LEN], uchar *in, int length)
+ 	mdfour_result(&md, digest);
+ }
+ 
+-#ifdef TEST_MDFOUR
+ int protocol_version = 28;
+ 
+ static void file_checksum1(char *fname)
+-- 
+2.49.0
+

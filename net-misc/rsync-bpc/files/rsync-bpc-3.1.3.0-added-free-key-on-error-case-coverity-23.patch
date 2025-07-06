@@ -1,0 +1,24 @@
+From 7215af4f16b729098193d7dde5a8c3c8c4ae80de Mon Sep 17 00:00:00 2001
+From: Craig Barratt <19445341+craigbarratt@users.noreply.github.com>
+Date: Sat, 24 Jul 2021 10:05:15 -0700
+Subject: [PATCH 08/20] added free(key) on error case; coverity #23
+
+---
+ backuppc/bpc_attrib.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/backuppc/bpc_attrib.c b/backuppc/bpc_attrib.c
+index 51ad469..25f7480 100644
+--- a/backuppc/bpc_attrib.c
++++ b/backuppc/bpc_attrib.c
+@@ -183,6 +183,7 @@ void bpc_attrib_xattrCopy(bpc_attrib_xattr *xattrSrc, bpc_attrib_file *fileDest)
+     }
+     value = (uchar*)malloc(xattrSrc->valueLen > 0 ? xattrSrc->valueLen : 1);
+     if ( !value ) {
++        free(key);
+         bpc_logErrf("bpc_attrib_xattrCopy: can't allocate %d bytes for value\n", xattrSrc->valueLen + 1);
+         return;
+     }
+-- 
+2.49.0
+

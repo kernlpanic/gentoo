@@ -1,0 +1,25 @@
+From 1b59d684595bf86862b668c4c997c0aeb66e946f Mon Sep 17 00:00:00 2001
+From: Craig Barratt <19445341+craigbarratt@users.noreply.github.com>
+Date: Sun, 8 Nov 2020 13:49:08 -0800
+Subject: [PATCH 02/20] fix build issue on CentOS6
+
+---
+ rsync.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/rsync.h b/rsync.h
+index 0fa77da..086f413 100644
+--- a/rsync.h
++++ b/rsync.h
+@@ -712,7 +712,7 @@ struct ht_int64_node {
+ #define ACLS_NEED_MASK 1
+ #endif
+ 
+-#if 0
++#if defined HAVE_FALLOCATE || HAVE_SYS_FALLOCATE
+ #ifdef HAVE_LINUX_FALLOC_H
+ #include <linux/falloc.h>
+ #endif
+-- 
+2.49.0
+

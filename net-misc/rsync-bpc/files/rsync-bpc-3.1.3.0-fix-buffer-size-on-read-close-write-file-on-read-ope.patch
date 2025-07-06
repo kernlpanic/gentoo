@@ -1,0 +1,30 @@
+From 1387fbf5df0920a7c49f82d5701387429b416b2b Mon Sep 17 00:00:00 2001
+From: Craig Barratt <19445341+craigbarratt@users.noreply.github.com>
+Date: Mon, 12 Jul 2021 10:48:44 -0700
+Subject: [PATCH 04/20] fix buffer size on read; close write file on read open
+ error; see #24
+
+---
+ backuppc/bpc_poolWrite.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/backuppc/bpc_poolWrite.c b/backuppc/bpc_poolWrite.c
+index d30aa45..ae42555 100644
+--- a/backuppc/bpc_poolWrite.c
++++ b/backuppc/bpc_poolWrite.c
+@@ -693,10 +693,11 @@ int bpc_poolWrite_copyToPool(bpc_poolWrite_info *info, char *poolPath, char *fil
+     if ( (fdRead = open(fileName, O_RDONLY)) < 0 ) {
+         info->errorCnt++;
+         bpc_logErrf("bpc_poolWrite_copyToPool: can't open %s for reading", fileName);
++        close(fdWrite);
+         return -1;
+     }
+ 
+-    while ( (nRead = read(fdRead, info->buffer, sizeof(info->buffer))) > 0 ) {
++    while ( (nRead = read(fdRead, info->buffer, BPC_POOL_WRITE_BUF_SZ)) > 0 ) {
+         uchar *p = info->buffer;
+         int thisWrite;
+ 
+-- 
+2.49.0
+

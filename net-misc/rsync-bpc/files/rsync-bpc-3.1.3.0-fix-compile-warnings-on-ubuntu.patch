@@ -1,0 +1,65 @@
+From a0423afa1bdf7f229b5a371b0b445ff8571d2ddf Mon Sep 17 00:00:00 2001
+From: Craig Barratt <19445341+craigbarratt@users.noreply.github.com>
+Date: Sun, 26 Nov 2023 10:18:56 -0800
+Subject: [PATCH 16/20] fix compile warnings on ubuntu
+
+---
+ popt/popt.c | 2 +-
+ rsync.h     | 8 +-------
+ socket.c    | 5 ++---
+ 3 files changed, 4 insertions(+), 11 deletions(-)
+
+diff --git a/popt/popt.c b/popt/popt.c
+index ec6f3bd..5d927f7 100644
+--- a/popt/popt.c
++++ b/popt/popt.c
+@@ -626,7 +626,7 @@ expandNextArg(/*@special@*/ poptContext con, const char * s)
+ 	    pos = te - t;
+ 	    t = realloc(t, tn);
+ 	    te = t + pos;
+-	    strncpy(te, a, alen); te += alen;
++	    memcpy(te, a, alen+1); te += alen;
+ 	    continue;
+ 	    /*@notreached@*/ /*@switchbreak@*/ break;
+ 	default:
+diff --git a/rsync.h b/rsync.h
+index 086f413..5e3fc9f 100644
+--- a/rsync.h
++++ b/rsync.h
+@@ -361,16 +361,10 @@ enum delret {
+ #include <sys/socket.h>
+ #endif
+ 
+-#ifdef TIME_WITH_SYS_TIME
+-#include <sys/time.h>
+-#include <time.h>
+-#else
+ #ifdef HAVE_SYS_TIME_H
+ #include <sys/time.h>
+-#else
+-#include <time.h>
+-#endif
+ #endif
++#include <time.h>
+ 
+ #ifdef HAVE_FCNTL_H
+ #include <fcntl.h>
+diff --git a/socket.c b/socket.c
+index 16c3c5f..6745265 100644
+--- a/socket.c
++++ b/socket.c
+@@ -73,9 +73,8 @@ static int establish_proxy_connection(int fd, char *host, int port,
+ 		authhdr = "";
+ 	}
+ 
+-	snprintf(buffer, sizeof buffer, "CONNECT %s:%d HTTP/1.0%s%s\r\n\r\n",
+-		 host, port, authhdr, authbuf);
+-	len = strlen(buffer);
++	len = snprintf(buffer, sizeof buffer, "CONNECT %s:%d HTTP/1.0%s%s\r\n\r\n", host, port, authhdr, authbuf);
++	assert(len > 0 && len < (int)sizeof buffer);
+ 	if (write(fd, buffer, len) != len) {
+ 		rsyserr(FERROR, errno, "failed to write to proxy");
+ 		return -1;
+-- 
+2.49.0
+

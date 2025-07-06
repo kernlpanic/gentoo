@@ -1,0 +1,26 @@
+From 22ddda36915e770d74b7f98eb23ec23ceee53021 Mon Sep 17 00:00:00 2001
+From: Machiry Aravind Kumar <makrvcs@gmail.com>
+Date: Sat, 4 Nov 2023 00:36:26 -0400
+Subject: [PATCH 13/20] Update bpc_refCount.c
+
+Using correct size.
+---
+ backuppc/bpc_refCount.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/backuppc/bpc_refCount.c b/backuppc/bpc_refCount.c
+index 163ff76..7d55d7a 100644
+--- a/backuppc/bpc_refCount.c
++++ b/backuppc/bpc_refCount.c
+@@ -162,7 +162,7 @@ static int bpc_poolRef_read_more_data(int fd, uchar *buf, size_t bufSize, size_t
+         }
+         if ( BPC_LogLevel >= 8 ) bpc_logMsgf("bpc_poolRef_read_more_data: read %d bytes (nRead = %d, sizeof(buf) = %d)\n", thisRead, *nRead, bufSize);
+         *nRead += thisRead;
+-    } while ( thisRead > 0 && *nRead < sizeof(buf) );
++    } while ( thisRead > 0 && *nRead < bufSize );
+     return 0;
+ }
+ 
+-- 
+2.49.0
+

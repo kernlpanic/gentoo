@@ -1,0 +1,46 @@
+From 89949117baacf7825939e7db26e198942defb53f Mon Sep 17 00:00:00 2001
+From: Florian Weimer <fweimer@redhat.com>
+Date: Mon, 27 Nov 2023 11:04:14 +0100
+Subject: [PATCH 20/20] configure.ac: Avoid implicit int in AF_INET6
+ availability check
+
+This obsolete C language feature is not necessary support by C99
+compilers.  Future compilers might disable them by default, to
+issue clearer diagnostic.  This commits prepares for that, so that
+the detected system properties do not change.
+---
+ configure.ac | 3 ++-
+ configure.sh | 3 ++-
+ 2 files changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index a8ad4c7..cc685cb 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -392,7 +392,8 @@ AS_HELP_STRING([--disable-ipv6],[disable to omit ipv6 support]),
+ #include <stdlib.h>
+ #include <sys/types.h>
+ #include <sys/socket.h>
+-main()
++int
++main(void)
+ {
+    if (socket(AF_INET6, SOCK_STREAM, 0) < 0)
+      exit(1);
+diff --git a/configure.sh b/configure.sh
+index dfc4115..b7df49d 100755
+--- a/configure.sh
++++ b/configure.sh
+@@ -7706,7 +7706,8 @@ else $as_nop
+ #include <stdlib.h>
+ #include <sys/types.h>
+ #include <sys/socket.h>
+-main()
++int
++main(void)
+ {
+    if (socket(AF_INET6, SOCK_STREAM, 0) < 0)
+      exit(1);
+-- 
+2.49.0
+
